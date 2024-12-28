@@ -6,3 +6,4 @@ deps:
 
 clean: 
 	rm -r vendor
+	rm go.sum

@@ -4,8 +4,14 @@ The Argus RTMP package contains resources used by the Argus Platform for handlin
 
 ## Setup
 
-go get "github.com/golang-jwt/jwt" "github.com/AgustinSRG/go-tls-certificate-loader"
+install dependencies: 
+```
+make deps
+```
 
 ## Usage 
 
+fetch this package:
+```
 go get "github.com/Max-Gabriel-Susman/rtmp"
+```

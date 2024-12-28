@@ -10,8 +10,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	tls_certificate_loader "github.com/AgustinSRG/go-tls-certificate-loader"
 )
 
 type RTMPChannel struct {
@@ -123,7 +121,7 @@ func NewServer() *Server {
 			}
 		}
 
-		cerLoader, err := tls_certificate_loader.NewTlsCertificateLoader(tls_certificate_loader.TlsCertificateLoaderConfig{
+		cerLoader, err := NewTlsCertificateLoader(TlsCertificateLoaderConfig{
 			CertificatePath:   certFile,
 			KeyPath:           keyFile,
 			CheckReloadPeriod: time.Duration(checkReloadSeconds) * time.Second,
