@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Max-Gabriel-Susman/argus-stream-engine-service/internal/rtmp"
+	"github.com/Max-Gabriel-Susman/rtmp"
 )
 
 func main() {

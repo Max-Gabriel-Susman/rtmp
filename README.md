@@ -8,3 +8,4 @@ go get "github.com/golang-jwt/jwt" "github.com/AgustinSRG/go-tls-certificate-loa
 
 ## Usage 
 
+go get "github.com/Max-Gabriel-Susman/rtmp"
