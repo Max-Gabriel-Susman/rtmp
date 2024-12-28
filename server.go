@@ -1,4 +1,4 @@
-package rtmp
+package main
 
 import (
 	"crypto/subtle"
