@@ -20,7 +20,7 @@ type BitrateCache struct {
 }
 
 type RTMPSession struct {
-	server        *RTMPServer
+	server        *Server
 	conn          net.Conn
 	ip            string
 	mutex         *sync.Mutex
@@ -75,7 +75,7 @@ type RTMPSession struct {
 	bitrate_cache BitrateCache
 }
 
-func NewRTMPSession(server *RTMPServer, id uint64, ip string, c net.Conn) RTMPSession {
+func NewRTMPSession(server *Server, id uint64, ip string, c net.Conn) RTMPSession {
 	return RTMPSession{
 		server:        server,
 		conn:          c,

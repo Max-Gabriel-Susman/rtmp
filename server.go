@@ -23,7 +23,7 @@ type RTMPChannel struct {
 	players       map[uint64]bool
 }
 
-type RTMPServer struct {
+type Server struct {
 	host            string
 	port            int
 	listener        net.Listener
@@ -39,8 +39,8 @@ type RTMPServer struct {
 	closed          bool
 }
 
-func NewServer() *RTMPServer {
-	server := RTMPServer{
+func NewServer() *Server {
+	server := Server{
 		host:            os.Getenv("RTMP_HOST"),
 		listener:        nil,
 		secureListener:  nil,
@@ -162,7 +162,7 @@ func NewServer() *RTMPServer {
 	return &server
 }
 
-func (server *RTMPServer) AddIP(ip string) bool {
+func (server *Server) AddIP(ip string) bool {
 	server.ip_mutex.Lock()
 	defer server.ip_mutex.Unlock()
 
@@ -177,7 +177,7 @@ func (server *RTMPServer) AddIP(ip string) bool {
 	return true
 }
 
-func (server *RTMPServer) isIPExempted(ipStr string) bool {
+func (server *Server) isIPExempted(ipStr string) bool {
 	r := os.Getenv("CONCURRENT_LIMIT_WHITELIST")
 
 	if r == "" {
@@ -208,7 +208,7 @@ func (server *RTMPServer) isIPExempted(ipStr string) bool {
 	return false
 }
 
-func (server *RTMPServer) RemoveIP(ip string) {
+func (server *Server) RemoveIP(ip string) {
 	server.ip_mutex.Lock()
 	defer server.ip_mutex.Unlock()
 
@@ -221,7 +221,7 @@ func (server *RTMPServer) RemoveIP(ip string) {
 	}
 }
 
-func (server *RTMPServer) NextSessionID() uint64 {
+func (server *Server) NextSessionID() uint64 {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -230,28 +230,28 @@ func (server *RTMPServer) NextSessionID() uint64 {
 	return r
 }
 
-func (server *RTMPServer) AddSession(s *RTMPSession) {
+func (server *Server) AddSession(s *RTMPSession) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
 	server.sessions[s.id] = s
 }
 
-func (server *RTMPServer) RemoveSession(id uint64) {
+func (server *Server) RemoveSession(id uint64) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
 	delete(server.sessions, id)
 }
 
-func (server *RTMPServer) isPublishing(channel string) bool {
+func (server *Server) isPublishing(channel string) bool {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
 	return server.channels[channel] != nil && server.channels[channel].is_publishing
 }
 
-func (server *RTMPServer) GetPublisher(channel string) *RTMPSession {
+func (server *Server) GetPublisher(channel string) *RTMPSession {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -267,7 +267,7 @@ func (server *RTMPServer) GetPublisher(channel string) *RTMPSession {
 	return server.sessions[id]
 }
 
-func (server *RTMPServer) SetPublisher(channel string, key string, StreamID string, s *RTMPSession) bool {
+func (server *Server) SetPublisher(channel string, key string, StreamID string, s *RTMPSession) bool {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -295,7 +295,7 @@ func (server *RTMPServer) SetPublisher(channel string, key string, StreamID stri
 	return true
 }
 
-func (server *RTMPServer) RemovePublisher(channel string) {
+func (server *Server) RemovePublisher(channel string) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -321,7 +321,7 @@ func (server *RTMPServer) RemovePublisher(channel string) {
 	}
 }
 
-func (server *RTMPServer) GetIdlePlayers(channel string) []*RTMPSession {
+func (server *Server) GetIdlePlayers(channel string) []*RTMPSession {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -343,7 +343,7 @@ func (server *RTMPServer) GetIdlePlayers(channel string) []*RTMPSession {
 	return playersToStart
 }
 
-func (server *RTMPServer) GetPlayers(channel string) []*RTMPSession {
+func (server *Server) GetPlayers(channel string) []*RTMPSession {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -365,7 +365,7 @@ func (server *RTMPServer) GetPlayers(channel string) []*RTMPSession {
 	return playersToStart
 }
 
-func (server *RTMPServer) AddPlayer(channel string, key string, s *RTMPSession) (bool, error) {
+func (server *Server) AddPlayer(channel string, key string, s *RTMPSession) (bool, error) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -396,7 +396,7 @@ func (server *RTMPServer) AddPlayer(channel string, key string, s *RTMPSession) 
 	return s.isIdling, nil
 }
 
-func (server *RTMPServer) RemovePlayer(channel string, key string, s *RTMPSession) {
+func (server *Server) RemovePlayer(channel string, key string, s *RTMPSession) {
 	if server.channels[channel] == nil {
 		return
 	}
@@ -411,7 +411,7 @@ func (server *RTMPServer) RemovePlayer(channel string, key string, s *RTMPSessio
 	}
 }
 
-func (server *RTMPServer) AcceptConnections(listener net.Listener, wg *sync.WaitGroup) {
+func (server *Server) AcceptConnections(listener net.Listener, wg *sync.WaitGroup) {
 	defer func() {
 		listener.Close()
 		wg.Done()
@@ -443,7 +443,7 @@ func (server *RTMPServer) AcceptConnections(listener net.Listener, wg *sync.Wait
 	}
 }
 
-func (server *RTMPServer) SendPings(wg *sync.WaitGroup) {
+func (server *Server) SendPings(wg *sync.WaitGroup) {
 	defer wg.Done()
 	for !server.closed {
 		// Wait
@@ -460,7 +460,7 @@ func (server *RTMPServer) SendPings(wg *sync.WaitGroup) {
 	}
 }
 
-func (server *RTMPServer) Start() {
+func (server *Server) Start() {
 	var wg sync.WaitGroup
 	if server.listener != nil {
 		wg.Add(1)
@@ -478,7 +478,7 @@ func (server *RTMPServer) Start() {
 	wg.Wait()
 }
 
-func (server *RTMPServer) HandleConnection(id uint64, ip string, c net.Conn) {
+func (server *Server) HandleConnection(id uint64, ip string, c net.Conn) {
 	s := NewRTMPSession(server, id, ip, c)
 
 	server.AddSession(&s)
@@ -504,7 +504,7 @@ func (server *RTMPServer) HandleConnection(id uint64, ip string, c net.Conn) {
 	s.HandleSession()
 }
 
-func (server *RTMPServer) getOutChunkSize() uint32 {
+func (server *Server) getOutChunkSize() uint32 {
 	r := os.Getenv("RTMP_CHUNK_SIZE")
 
 	if r == "" {
