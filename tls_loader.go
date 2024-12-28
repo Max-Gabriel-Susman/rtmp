@@ -7,40 +7,16 @@ import (
 	"time"
 )
 
-// TLS certificate loader
 type TlsCertificateLoader struct {
-	// Configuration
-	config TlsCertificateLoaderConfig
-
-	// Mutex for the struct
-	mu *sync.Mutex
-
-	// True if the certificate loader is closed
-	closed bool
-
-	// Channel to notify the closing of the loader to the co-routine
-	closeChan chan struct{}
-
-	// TLS loaded certificate
+	config      TlsCertificateLoaderConfig
+	mu          *sync.Mutex
+	closed      bool
+	closeChan   chan struct{}
 	certificate *tls.Certificate
-
-	// Last modified time of certificate file
 	certModTime time.Time
-
-	// Last modified time of key file
-	keyModTime time.Time
+	keyModTime  time.Time
 }
 
-// Creates a new instance of TlsCertificateLoader
-// Also loads the key pair for the first time
-//
-// # Takes the configuration as the only parameter
-//
-// Returns an error as the seconds return value if an error occurs loading the key pair for the first time
-// In this case, no instance is created, and nil is returned instead as the first return value.
-//
-// Important: If succeeded, this function starts a new co-routine to periodically reload the key pair.
-// If you stop that co-routine, call the Close() function
 func NewTlsCertificateLoader(config TlsCertificateLoaderConfig) (*TlsCertificateLoader, error) {
 	statCert, err := os.Stat(config.CertificatePath)
 

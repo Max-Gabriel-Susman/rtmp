@@ -121,7 +121,7 @@ func NewServer() *Server {
 			}
 		}
 
-		cerLoader, err := NewTlsCertificateLoader(TlsCertificateLoaderConfig{
+		cerLoader, err := NewTlsCertificateLoader(Config{
 			CertificatePath:   certFile,
 			KeyPath:           keyFile,
 			CheckReloadPeriod: time.Duration(checkReloadSeconds) * time.Second,
