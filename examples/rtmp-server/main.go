@@ -1,4 +1,4 @@
-package main
+package rtmp
 
 import (
 	"github.com/Max-Gabriel-Susman/rtmp"
