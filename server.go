@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-type RTMPChannel struct {
+type Channel struct {
 	channel       string
 	key           string
 	StreamID      string
@@ -28,7 +28,7 @@ type Server struct {
 	secureListener  net.Listener
 	mutex           *sync.Mutex
 	sessions        map[uint64]*RTMPSession
-	channels        map[string]*RTMPChannel
+	channels        map[string]*Channel
 	ip_count        map[string]uint32
 	ip_limit        uint32
 	ip_mutex        *sync.Mutex
@@ -45,7 +45,7 @@ func NewServer() *Server {
 		mutex:           &sync.Mutex{},
 		ip_mutex:        &sync.Mutex{},
 		sessions:        make(map[uint64]*RTMPSession),
-		channels:        make(map[string]*RTMPChannel),
+		channels:        make(map[string]*Channel),
 		next_session_id: 1,
 		closed:          false,
 		ip_count:        make(map[string]uint32),
@@ -121,7 +121,7 @@ func NewServer() *Server {
 			}
 		}
 
-		cerLoader, err := NewTlsCertificateLoader(Config{
+		cerLoader, err := NewTlsCertificateLoader(TlsCertificateLoaderConfig{
 			CertificatePath:   certFile,
 			KeyPath:           keyFile,
 			CheckReloadPeriod: time.Duration(checkReloadSeconds) * time.Second,
@@ -274,7 +274,7 @@ func (server *Server) SetPublisher(channel string, key string, StreamID string, 
 	}
 
 	if server.channels[channel] == nil {
-		c := RTMPChannel{
+		c := Channel{
 			channel:       channel,
 			key:           key,
 			StreamID:      StreamID,
@@ -368,7 +368,7 @@ func (server *Server) AddPlayer(channel string, key string, s *RTMPSession) (boo
 	defer server.mutex.Unlock()
 
 	if server.channels[channel] == nil {
-		c := RTMPChannel{
+		c := Channel{
 			channel:       channel,
 			key:           key,
 			StreamID:      "",
