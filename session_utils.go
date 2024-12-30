@@ -134,7 +134,7 @@ func (s *RTMPSession) SendInvokeMessage(StreamID uint32, cmd RTMPCommand) {
 	s.SendSync(bytes)
 }
 
-func (s *RTMPSession) SendDataMessage(StreamID uint32, data RTMPData) {
+func (s *RTMPSession) SendDataMessage(StreamID uint32, data Data) {
 	packet := createBlankRTMPPacket()
 
 	packet.header.fmt = RTMP_CHUNK_TYPE_0
@@ -183,7 +183,7 @@ func (s *RTMPSession) SendStatusMessage(StreamID uint32, level string, code stri
 }
 
 func (s *RTMPSession) SendSampleAccess(StreamID uint32) {
-	cmd := RTMPData{
+	cmd := Data{
 		tag:       "|RtmpSampleAccess",
 		arguments: make(map[string]*AMF0Value),
 	}
@@ -344,8 +344,8 @@ func (s *RTMPSession) SendVideoCodecHeader(videoCodec uint32, avcSequenceHeader 
 	s.SendSync(chunks)
 }
 
-func (s *RTMPSession) BuildMetadata(data *RTMPData) []byte {
-	cmd := RTMPData{
+func (s *RTMPSession) BuildMetadata(data *Data) []byte {
+	cmd := Data{
 		tag:       "onMetaData",
 		arguments: make(map[string]*AMF0Value),
 	}

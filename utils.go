@@ -176,12 +176,12 @@ func decodeRTMPCommand(data []byte) RTMPCommand {
 	return c
 }
 
-type RTMPData struct {
+type Data struct {
 	tag       string
 	arguments map[string]*AMF0Value
 }
 
-func (c *RTMPData) ToString() string {
+func (c *Data) ToString() string {
 	str := "" + c.tag + " {\n"
 
 	for argName, argVal := range c.arguments {
@@ -192,7 +192,7 @@ func (c *RTMPData) ToString() string {
 	return str
 }
 
-func (c *RTMPData) GetArg(argName string) *AMF0Value {
+func (c *Data) GetArg(argName string) *AMF0Value {
 	if c.arguments[argName] != nil {
 		return c.arguments[argName]
 	} else {
@@ -201,7 +201,7 @@ func (c *RTMPData) GetArg(argName string) *AMF0Value {
 	}
 }
 
-func (c *RTMPData) Encode() []byte {
+func (c *Data) Encode() []byte {
 	var buf []byte
 
 	x := createAMF0Value(AMF0_TYPE_STRING)
@@ -221,8 +221,8 @@ func (c *RTMPData) Encode() []byte {
 	return buf
 }
 
-func decodeRTMPData(data []byte) RTMPData {
-	c := RTMPData{
+func decodeRTMPData(data []byte) Data {
+	c := Data{
 		tag:       "",
 		arguments: make(map[string]*AMF0Value),
 	}

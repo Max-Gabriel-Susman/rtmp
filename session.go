@@ -865,7 +865,7 @@ func (s *RTMPSession) HandleDataPacketAMF3(packet *RTMPPacket) bool {
 	return s.HandleRTMPData(packet, &data)
 }
 
-func (s *RTMPSession) HandleRTMPData(packet *RTMPPacket, data *RTMPData) bool {
+func (s *RTMPSession) HandleRTMPData(packet *RTMPPacket, data *Data) bool {
 	LogDebugSession(s.id, s.ip, "Received data: "+data.ToString())
 	switch data.tag {
 	case "@setDataFrame":
